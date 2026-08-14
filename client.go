@@ -57,7 +57,7 @@ func (s Client) ChatCompletions(ctx context.Context, r ChatCompletionRequest) (*
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, err := io.ReadAll(resp.Request.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			slog.ErrorContext(ctx, "cannot read body", "error", err)
 		}
@@ -292,7 +292,7 @@ func (s Client) Models(ctx context.Context) ([]Model, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, err := io.ReadAll(resp.Request.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			slog.ErrorContext(ctx, "cannot read body", "error", err)
 		}
@@ -334,7 +334,7 @@ func (s Client) UserBalance(ctx context.Context) (*UserBalance, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, err := io.ReadAll(resp.Request.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			slog.ErrorContext(ctx, "cannot read body", "error", err)
 		}

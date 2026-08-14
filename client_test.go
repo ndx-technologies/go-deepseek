@@ -1,8 +1,12 @@
 package godeepseek_test
 
 import (
+	"errors"
+	"fmt"
+	"io"
 	"net/http"
 	"os"
+	"strings"
 	"testing"
 
 	godeepseek "github.com/ndx-technologies/go-deepseek"
@@ -197,5 +201,75 @@ func TestClient_UserBalance(t *testing.T) {
 	}
 	if !balance.IsAvailable {
 		t.Error("balance is not available")
+	}
+}
+
+type roundTripperFunc func(*http.Request) (*http.Response, error)
+
+func (f roundTripperFunc) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
+
+func newErrorClient(statusCode int, body string) godeepseek.Client {
+	return godeepseek.Client{
+		Config:  godeepseek.Config{}.WithDefaults(),
+		Secrets: godeepseek.Secrets{Token: "test-token"},
+		HTTPClient: &http.Client{Transport: roundTripperFunc(func(r *http.Request) (*http.Response, error) {
+			return &http.Response{
+				StatusCode: statusCode,
+				Status:     fmt.Sprintf("%d %s", statusCode, http.StatusText(statusCode)),
+				Body:       io.NopCloser(strings.NewReader(body)),
+				Header:     make(http.Header),
+			}, nil
+		})},
+	}
+}
+
+func TestClient_ChatCompletions_Error(t *testing.T) {
+	client := newErrorClient(http.StatusBadRequest, `{"error":{"message":"boom"}}`)
+
+	_, err := client.ChatCompletions(t.Context(), godeepseek.ChatCompletionRequest{Model: godeepseek.DeepSeekV4Flash})
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+
+	var apiErr *godeepseek.Error
+	if !errors.As(err, &apiErr) {
+		t.Errorf("errors.As: got %T (%v), want *godeepseek.Error", err, err)
+	}
+	if apiErr.HTTPStatusCode != http.StatusBadRequest {
+		t.Error(apiErr.HTTPStatusCode)
+	}
+}
+
+func TestClient_Models_Error(t *testing.T) {
+	client := newErrorClient(http.StatusBadRequest, `{"error":{"message":"boom"}}`)
+
+	_, err := client.Models(t.Context())
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+
+	var apiErr *godeepseek.Error
+	if !errors.As(err, &apiErr) {
+		t.Errorf("errors.As: got %T (%v), want *godeepseek.Error", err, err)
+	}
+	if apiErr.HTTPStatusCode != http.StatusBadRequest {
+		t.Error(apiErr.HTTPStatusCode)
+	}
+}
+
+func TestClient_UserBalance_Error(t *testing.T) {
+	client := newErrorClient(http.StatusBadRequest, `{"error":{"message":"boom"}}`)
+
+	_, err := client.UserBalance(t.Context())
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+
+	var apiErr *godeepseek.Error
+	if !errors.As(err, &apiErr) {
+		t.Errorf("errors.As: got %T (%v), want *godeepseek.Error", err, err)
+	}
+	if apiErr.HTTPStatusCode != http.StatusBadRequest {
+		t.Error(apiErr.HTTPStatusCode)
 	}
 }
