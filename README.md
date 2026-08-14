@@ -1,1 +1,1 @@
-# go-deepseek
+deepseek Go client
