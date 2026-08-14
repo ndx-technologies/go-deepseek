@@ -76,7 +76,7 @@ type ChatCompletionRequest struct {
 	Messages        []Message       `json:"messages"`                  // A list of messages comprising the conversation so far.
 	Model           ModelID         `json:"model"`                     //
 	Thinking        ThinkingConfig  `json:"thinking,omitzero"`         // default "enabled"
-	ReasoningEffort ReasoningEffort `json:"reasoning_effort,omitzero"` // default "hight"
+	ReasoningEffort ReasoningEffort `json:"reasoning_effort,omitzero"` // default "high"
 	MaxTokens       int             `json:"max_tokens,omitzero"`       // The maximum number of tokens that can be generated in the chat completion. The total length of input tokens and generated tokens is limited by the model's context length. Default values and limits: https://api-docs.deepseek.com/quick_start/pricing
 	ResponseFormat  ResponseFormat  `json:"response_format,omitzero"`  // default "text"
 	Stop            []string        `json:"stop,omitzero"`             // Up to 16 sequences where the API will stop generating further tokens.
@@ -161,7 +161,7 @@ const (
 	ReasoningEffortMax  ReasoningEffort = "max"
 )
 
-// ResponseForamt that the model must output.
+// ResponseFormat that the model must output.
 type ResponseFormat struct {
 	Type ResponseFormatType `json:"type"`
 }
@@ -236,11 +236,11 @@ type CompletionChoice struct {
 type FinishReason string
 
 const (
-	Stop                       FinishReason = "stop"                                // model hit a natural stop point or a provided stop sequence
-	FinishReasonLength         FinishReason = "length"                              // maximum number of tokens specified in the request was reached
-	FinishReasonContentFilter  FinishReason = `json:"content_filter"`               // content was omitted due to a flag from our content filters
-	FinishReasonToolCalls      FinishReason = `json:"tool_calls"`                   // model called a tool
-	InsufficientSystemResource FinishReason = `json:"insufficient_system_resource"` // request is interrupted due to insufficient resource of the inference system
+	Stop                       FinishReason = "stop"                         // model hit a natural stop point or a provided stop sequence
+	FinishReasonLength         FinishReason = "length"                       // maximum number of tokens specified in the request was reached
+	FinishReasonContentFilter  FinishReason = "content_filter"               // content was omitted due to a flag from our content filters
+	FinishReasonToolCalls      FinishReason = "tool_calls"                   // model called a tool
+	InsufficientSystemResource FinishReason = "insufficient_system_resource" // request is interrupted due to insufficient resource of the inference system
 )
 
 type Usage struct {
@@ -363,7 +363,7 @@ type BalanceInfo struct {
 
 type Currency string
 
-var (
+const (
 	USD Currency = "USD"
 	CNY Currency = "CNY"
 )
