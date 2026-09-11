@@ -31,7 +31,7 @@ func TestClient_ChatCompletions(t *testing.T) {
 				{Content: "Say hi", Role: godeepseek.User},
 			},
 			MaxTokens: 1000,
-			Model:     godeepseek.DeepSeekV4Flash,
+			Model:     godeepseek.DeepSeekFlash,
 		}
 
 		resp, err := client.ChatCompletions(t.Context(), req)
@@ -76,7 +76,7 @@ func TestClient_ChatCompletions(t *testing.T) {
 				{Role: godeepseek.System, Content: "You are testing assistant. Perform simple single test call for tools user asks."},
 				{Role: godeepseek.User, Content: "lets test terminal"},
 			},
-			Model:     godeepseek.DeepSeekV4Flash,
+			Model:     godeepseek.DeepSeekFlash,
 			MaxTokens: 1000,
 			Tools:     []godeepseek.Tool{terminalTool},
 		}
@@ -133,7 +133,7 @@ func TestClient_ChatCompletions(t *testing.T) {
 
 		resp2, err := client.ChatCompletions(t.Context(), godeepseek.ChatCompletionRequest{
 			Messages:  messages,
-			Model:     godeepseek.DeepSeekV4Flash,
+			Model:     godeepseek.DeepSeekFlash,
 			MaxTokens: 1000,
 		})
 		if err != nil {
@@ -226,7 +226,7 @@ func newErrorClient(statusCode int, body string) godeepseek.Client {
 func TestClient_ChatCompletions_Error(t *testing.T) {
 	client := newErrorClient(http.StatusBadRequest, `{"error":{"message":"boom"}}`)
 
-	_, err := client.ChatCompletions(t.Context(), godeepseek.ChatCompletionRequest{Model: godeepseek.DeepSeekV4Flash})
+	_, err := client.ChatCompletions(t.Context(), godeepseek.ChatCompletionRequest{Model: godeepseek.DeepSeekFlash})
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}

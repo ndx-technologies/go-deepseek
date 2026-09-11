@@ -137,8 +137,8 @@ type FunctionCall struct {
 type ModelID string
 
 const (
-	DeepSeekV4Flash ModelID = "deepseek-v4-flash"
-	DeepSeekV4Pro   ModelID = "deepseek-v4-pro"
+	DeepSeekFlash ModelID = "deepseek-flash"
+	DeepSeekV4Pro ModelID = "deepseek-v4-pro"
 )
 
 type ThinkingConfig struct {
